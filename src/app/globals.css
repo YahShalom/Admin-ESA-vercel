@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Day: white + ocean blue + gold */
+    --background: 210 33% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Primary = Caribbean blue */
+    --primary: 210 90% 44%;
+    --primary-foreground: 210 40% 98%;
+
+    /* Gold accent */
+    --accent: 43 96% 52%;
+    --accent-foreground: 222 47% 11%;
+
+    --secondary: 210 24% 94%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 24% 94%;
+    --muted-foreground: 215 16% 47%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 210 90% 44%;
+    --radius: 0.75rem;
+
+    /* Sidebar (luxury admin) */
+    --sidebar-background: 220 28% 12%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 210 90% 58%;
+    --sidebar-primary-foreground: 220 28% 12%;
+    --sidebar-accent: 43 96% 52%;
+    --sidebar-accent-foreground: 220 28% 12%;
+    --sidebar-border: 220 22% 18%;
+    --sidebar-ring: 210 90% 44%;
+  }
+ 
+  .dark {
+    /* Night: charcoal + blue + gold */
+    --background: 220 18% 10%;
+    --foreground: 210 40% 98%;
+    --card: 220 22% 12%;
+    --card-foreground: 210 40% 98%;
+    --popover: 220 22% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 90% 58%;
+    --primary-foreground: 220 18% 10%;
+
+    --accent: 43 96% 56%;
+    --accent-foreground: 220 18% 10%;
+
+    --secondary: 220 16% 16%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 220 16% 16%;
+    --muted-foreground: 215 20% 70%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 16% 20%;
+    --input: 220 16% 20%;
+    --ring: 210 90% 58%;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
