@@ -40,10 +40,17 @@ export function CreateProjectButton({ category }: { category: { name: string, ic
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Card className="flex flex-col items-center justify-center p-6 text-center hover:bg-muted/50 transition-colors cursor-pointer">
-          <category.icon className="h-8 w-8 mb-4 text-primary" />
-          <h3 className="font-semibold">{category.name}</h3>
-          <p className="text-xs text-muted-foreground mt-1">Start from a template</p>
+        <Card className="group relative flex items-center gap-4 p-4 transition-all hover:bg-muted/50 cursor-pointer">
+          <div className="absolute -inset-px rounded-xl bg-gradient-to-r from-primary to-amber-500 opacity-0 transition-all group-hover:opacity-100"></div>
+          <div className="relative flex items-center gap-4">
+            <div className="p-2 bg-gradient-to-br from-primary to-amber-500 rounded-lg">
+              <category.icon className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h3 className="font-semibold">{category.name}</h3>
+              <p className="text-xs text-muted-foreground mt-1">Start from a template</p>
+            </div>
+          </div>
         </Card>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

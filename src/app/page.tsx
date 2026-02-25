@@ -17,11 +17,11 @@ export default function LandingPage() {
       </header>
       <main className="flex-grow flex flex-col items-center justify-center text-center p-4">
         <div className="space-y-4">
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-amber-500 py-2">
-            Carai Agency
+          <h1 className="text-6xl md:text-8xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-amber-500 py-2">
+            Admin ESA
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Caribbean AI Agency — where Caribbean spirit meets intelligent design.
+            Your Enterprise SaaS Assistant. We handle the boilerplate so you can focus on your product.
           </p>
         </div>
         <div className="mt-8">

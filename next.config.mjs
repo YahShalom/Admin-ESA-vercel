@@ -1,4 +1,3 @@
-import type {NextConfig} from 'next';
 
 const securityHeaders = [
     {
@@ -24,7 +23,7 @@ const securityHeaders = [
     }
 ];
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   /* config options here */
   images: {
     remotePatterns: [

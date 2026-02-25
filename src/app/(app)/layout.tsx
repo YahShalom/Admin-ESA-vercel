@@ -14,6 +14,7 @@ import {
   SidebarInset,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
+import { UserDropdown } from './user-dropdown'
 
 
 export default async function AppLayout({
@@ -50,6 +51,7 @@ export default async function AppLayout({
           <div className="w-full flex-1">
             {/* Header content can go here */}
           </div>
+          <UserDropdown user={user} />
         </header>
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </SidebarInset>

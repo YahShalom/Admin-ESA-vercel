@@ -16,15 +16,15 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
+import { ReactNode } from 'react'
 
-export default async function TenantLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode
-  params: { tenantSlug: string }
-}) {
-  const { tenantSlug } = params
+type LayoutProps = {
+  children: React.ReactNode;
+  params: Promise<{ tenantSlug: string }>;
+};
+
+export default async function TenantLayout({ children, params }: LayoutProps) {
+  const { tenantSlug } = await params;
   const supabase = await createServerSupabase()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {

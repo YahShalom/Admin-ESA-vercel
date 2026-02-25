@@ -156,6 +156,23 @@ const SidebarProvider = React.forwardRef<
 )
 SidebarProvider.displayName = "SidebarProvider"
 
+const SidebarBackground = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div">
+>(({ className, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "absolute -inset-px -z-10 rounded-lg bg-gradient-to-b from-sidebar/30 to-sidebar/70 shadow-[inset_0_0_0_1px_theme(colors.sidebar.border)]",
+        className
+      )}
+      {...props}
+    />
+  )
+})
+SidebarBackground.displayName = "SidebarBackground"
+
 const Sidebar = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
@@ -181,12 +198,13 @@ const Sidebar = React.forwardRef<
       return (
         <div
           className={cn(
-            "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
+            "relative flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
             className
           )}
           ref={ref}
           {...props}
         >
+          <SidebarBackground />
           {children}
         </div>
       )
@@ -248,8 +266,9 @@ const Sidebar = React.forwardRef<
         >
           <div
             data-sidebar="sidebar"
-            className="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
+            className="relative flex h-full w-full flex-col bg-sidebar/95 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border-0 group-data-[variant=floating]:shadow-lg backdrop-blur-md"
           >
+            <SidebarBackground />
             {children}
           </div>
         </div>

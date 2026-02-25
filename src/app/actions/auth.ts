@@ -62,3 +62,9 @@ export async function requestMagicLink(formData: FormData) {
 
   return redirect('/login?message=Check%20your%20email%20for%20the%20magic%20link');
 }
+
+export async function signOut() {
+    const supabase = await createServerSupabase();
+    await supabase.auth.signOut();
+    return redirect('/login');
+}

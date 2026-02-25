@@ -31,57 +31,61 @@ export default async function DashboardPage() {
     .filter(Boolean) || []
 
   return (
-    <div className="flex flex-col gap-8">
-      <div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <div className="lg:col-span-2">
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">Admin ESA Dashboard</h1>
         <p className="text-muted-foreground">
           Select a tenant or create a new project.
         </p>
+
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Your Tenants</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {tenants.length > 0 ? (
+              <div className="grid gap-4 md:grid-cols-2">
+                {tenants.map((tenant) => tenant && (
+                  <Card key={tenant.id}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Building className="h-5 w-5" />
+                        {tenant.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">Slug: {tenant.slug}</p>
+                    </CardContent>
+                    <CardFooter>
+                      <Button asChild className="w-full">
+                        <Link href={`/${tenant.slug}`}>Enter</Link>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center p-8">
+                <h3 className="font-semibold">No tenants found</h3>
+                <p className="text-muted-foreground text-center mt-2">You are not associated with any tenants yet. You can create one below.</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
-      <section>
-        <h2 className="text-xl font-semibold tracking-tight mb-4">Your Tenants</h2>
-        {tenants.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {tenants.map((tenant) => tenant && (
-              <Card key={tenant.id}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Building className="h-5 w-5" />
-                    {tenant.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">Slug: {tenant.slug}</p>
-                </CardContent>
-                <CardFooter>
-                  <Button asChild className="w-full">
-                    <Link href={`/${tenant.slug}`}>Enter</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          <Card className="flex flex-col items-center justify-center p-8">
+      <div className="lg:col-span-1">
+        <Card>
             <CardHeader>
-              <CardTitle>No tenants found</CardTitle>
+                <CardTitle>Create a New Project</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">You are not associated with any tenants yet. You can create one below.</p>
+            <CardContent className="grid gap-4">
+                {categories.map((category) => (
+                    <CreateProjectButton key={category.name} category={category} />
+                ))}
             </CardContent>
-          </Card>
-        )}
-      </section>
-
-      <section>
-        <h2 className="text-xl font-semibold tracking-tight mb-4">Create a New Project</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {categories.map((category) => (
-            <CreateProjectButton key={category.name} category={category} />
-          ))}
-        </div>
-      </section>
+        </Card>
+      </div>
     </div>
   )
 }
