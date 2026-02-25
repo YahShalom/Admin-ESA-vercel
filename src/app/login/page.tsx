@@ -30,8 +30,10 @@ export default async function LoginPage({
       .eq('owner_id', session.user.id)
       .maybeSingle()
 
-    if (tenant?.slug) {
-      redirect(`/${tenant.slug}/dashboard`)
+    const tenantSlug = (tenant as { slug?: string } | null)?.slug
+
+    if (tenantSlug) {
+      redirect(`/${tenantSlug}/dashboard`)
     } else {
       redirect('/onboarding')
     }
