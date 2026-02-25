@@ -1,55 +1,50 @@
-import { createServerSupabase } from '@/lib/supabase/server';
-import { NextResponse, type NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from "next/server";
+import { createServerSupabase } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get('code');
 
-  if (!code) {
-    const loginUrl = new URL('/login', origin);
-    loginUrl.searchParams.set('error', 'missing_code');
-    loginUrl.searchParams.set('error_description', 'The sign-in link is missing the required authentication code.');
-    return NextResponse.redirect(loginUrl);
-  }
+  const code = searchParams.get("code");
+  const token_hash = searchParams.get("token_hash");
+  const type = searchParams.get("type"); // "magiclink" | "recovery" | etc
 
   const supabase = await createServerSupabase();
-  const { error, data: { user } } = await supabase.auth.exchangeCodeForSession(code);
 
-  if (error) {
-    console.error('Authentication error:', error.message);
-    const loginUrl = new URL('/login', origin);
-    loginUrl.searchParams.set('error', 'exchange_failed');
-    loginUrl.search_params.set('error_description', error.message);
-    return NextResponse.redirect(loginUrl);
+  // 1) PKCE flow (returns ?code=...)
+  if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) {
+      const loginUrl = new URL("/login", origin);
+      loginUrl.searchParams.set("error", "exchange_failed");
+      loginUrl.searchParams.set("error_description", error.message);
+      return NextResponse.redirect(loginUrl);
+    }
+    return NextResponse.redirect(new URL("/onboarding", origin));
   }
 
-  if (!user) {
-    console.error('No user found after code exchange.');
-    const loginUrl = new URL('/login', origin);
-    loginUrl.searchParams.set('error', 'internal_error');
-    loginUrl.searchParams.set('error_description', 'Could not retrieve user after sign-in.');
-    return NextResponse.redirect(loginUrl);
+  // 2) Token-hash flow (returns ?token_hash=...&type=magiclink)
+  if (token_hash && type) {
+    const { error } = await supabase.auth.verifyOtp({
+      type: type as any,
+      token_hash,
+    });
+
+    if (error) {
+      const loginUrl = new URL("/login", origin);
+      loginUrl.searchParams.set("error", "verify_failed");
+      loginUrl.searchParams.set("error_description", error.message);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    return NextResponse.redirect(new URL("/onboarding", origin));
   }
 
-  console.log(`User ${user.id} signed in.`);
-
-  const { data: tenant, error: tenantError } = await supabase
-    .from('tenants')
-    .select('slug')
-    .eq('owner_id', user.id)
-    .maybeSingle();
-
-  if (tenantError) {
-    console.error(`Tenant lookup error for user ${user.id}:`, tenantError.message);
-  }
-
-  if (tenant?.slug) {
-    const redirectPath = `/${tenant.slug}/dashboard`;
-    console.log(`Redirecting user ${user.id} to ${redirectPath}`);
-    return NextResponse.redirect(new URL(redirectPath, origin));
-  } else {
-    const redirectPath = '/onboarding';
-    console.log(`Redirecting user ${user.id} to ${redirectPath}`);
-    return NextResponse.redirect(new URL(redirectPath, origin));
-  }
+  // 3) Nothing usable
+  const loginUrl = new URL("/login", origin);
+  loginUrl.searchParams.set("error", "missing_code_or_token");
+  loginUrl.searchParams.set(
+    "error_description",
+    "Auth callback missing code or token_hash."
+  );
+  return NextResponse.redirect(loginUrl);
 }
