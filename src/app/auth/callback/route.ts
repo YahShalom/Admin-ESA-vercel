@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     console.error('Authentication error:', error.message);
     const loginUrl = new URL('/login', origin);
     loginUrl.searchParams.set('error', 'exchange_failed');
-    loginUrl.search_params.set('error_description', error.message);
+    loginUrl.searchParams.set('error_description', error.message);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -43,8 +43,10 @@ export async function GET(request: NextRequest) {
     console.error(`Tenant lookup error for user ${user.id}:`, tenantError.message);
   }
 
-  if (tenant?.slug) {
-    const redirectPath = `/${tenant.slug}/dashboard`;
+  const tenantSlug = (tenant as { slug?: string } | null)?.slug;
+
+  if (tenantSlug) {
+    const redirectPath = `/${tenantSlug}/dashboard`;
     console.log(`Redirecting user ${user.id} to ${redirectPath}`);
     return NextResponse.redirect(new URL(redirectPath, origin));
   } else {
