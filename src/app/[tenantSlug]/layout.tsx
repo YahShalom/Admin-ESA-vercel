@@ -26,8 +26,8 @@ type LayoutProps = {
 export default async function TenantLayout({ children, params }: LayoutProps) {
   const { tenantSlug } = await params;
   const supabase = await createServerSupabase()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) {
     redirect('/login')
   }
 
@@ -36,7 +36,7 @@ export default async function TenantLayout({ children, params }: LayoutProps) {
   const { error: rlsError, count } = await supabase
     .from('tenant_memberships')
     .select('*', { count: 'exact', head: true })
-    .match({ user_id: user.id, tenant_id: tenant.id })
+    .match({ user_id: session.user.id, tenant_id: tenant.id })
     
   if (rlsError || count === 0) {
     redirect('/auth/forbidden')

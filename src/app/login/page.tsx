@@ -1,5 +1,6 @@
 import Link from 'next/link'
-
+import { createServerSupabase } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 import { requestMagicLink } from '@/app/actions/auth'
 import { AdminEsaMark } from '@/components/brand/AdminEsaMark'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -17,9 +18,25 @@ type SearchParams = {
 export default async function LoginPage({
   searchParams,
 }: {
-  // Next 15+ / Next 16: searchParams is async.
   searchParams: Promise<SearchParams>
 }) {
+  const supabase = await createServerSupabase()
+  const { data: { session } } = await supabase.auth.getSession()
+
+  if (session) {
+    const { data: tenant } = await supabase
+      .from('tenants')
+      .select('slug')
+      .eq('owner_id', session.user.id)
+      .maybeSingle()
+
+    if (tenant?.slug) {
+      redirect(`/${tenant.slug}/dashboard`)
+    } else {
+      redirect('/onboarding')
+    }
+  }
+
   const sp = await searchParams
   const finalMessage = sp?.message ? decodeURIComponent(sp.message) : null
   const finalError = sp?.error ? decodeURIComponent(sp.error) : null
