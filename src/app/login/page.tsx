@@ -1,6 +1,7 @@
+'use client'
+
 import Link from 'next/link'
-import { createServerSupabase } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { requestMagicLink } from '@/app/actions/auth'
 import { AdminEsaMark } from '@/components/brand/AdminEsaMark'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -9,37 +10,17 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Terminal } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-type SearchParams = {
-  message?: string
-  error?: string
-}
+export default function LoginPage() {
+  const searchParams = useSearchParams()
+  const message = searchParams.get('message')
+  const error = searchParams.get('error')
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParams>
-}) {
-  const supabase = await createServerSupabase()
-  const { data: { session } } = await supabase.auth.getSession()
-
-  if (session) {
-    const { data: tenant } = await supabase
-      .from('tenants')
-      .select('slug')
-      .eq('owner_id', session.user.id)
-      .maybeSingle()
-
-    if (tenant?.slug) {
-      redirect(`/${tenant.slug}/dashboard`)
-    } else {
-      redirect('/onboarding')
-    }
-  }
-
-  const sp = await searchParams
-  const finalMessage = sp?.message ? decodeURIComponent(sp.message) : null
-  const finalError = sp?.error ? decodeURIComponent(sp.error) : null
+  const [origin, setOrigin] = useState('')
+  useEffect(() => {
+    setOrigin(window.location.origin)
+  }, [])
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
@@ -60,26 +41,27 @@ export default async function LoginPage({
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" name="email" type="email" placeholder="m@example.com" required />
+              {origin && <input type="hidden" name="origin" value={origin} />}
             </div>
             <Button type="submit" className="w-full">
               Send Magic Link
             </Button>
           </CardContent>
 
-          {(finalMessage || finalError) && (
+          {(message || error) && (
             <CardFooter>
-              {finalMessage && (
+              {message && (
                 <Alert>
                   <Terminal className="h-4 w-4" />
                   <AlertTitle>Check your email</AlertTitle>
-                  <AlertDescription>{finalMessage}</AlertDescription>
+                  <AlertDescription>{message}</AlertDescription>
                 </Alert>
               )}
-              {finalError && (
+              {error && (
                 <Alert variant="destructive">
                   <Terminal className="h-4 w-4" />
                   <AlertTitle>Error</AlertTitle>
-                  <AlertDescription>{finalError}</AlertDescription>
+                  <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
             </CardFooter>
