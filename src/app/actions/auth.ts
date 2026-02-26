@@ -9,6 +9,33 @@ const otpRequests = new Map<string, number[]>()
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000 // 15 minutes
 const RATE_LIMIT_COUNT = 5
 
+export async function signInWithGoogle(formData: FormData) {
+  const origin = formData.get('origin') as string
+  if (!origin) {
+    console.error('Auth action: client origin not provided for Google OAuth.')
+    return redirect(
+      `/login?error=${encodeURIComponent('Could not determine application origin. Please try again.')}`
+    )
+  }
+
+  const supabase = await createServerSupabase()
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${origin}/auth/callback`,
+    },
+  })
+
+  if (error) {
+    console.error('Error during signInWithOAuth:', error)
+    return redirect(
+      `/login?error=${encodeURIComponent('Could not sign in with Google. Please try again.')}&error_description=${encodeURIComponent(error.message)}`
+    )
+  }
+
+  return redirect(data.url)
+}
+
 export async function requestMagicLink(formData: FormData) {
   const email = (formData.get('email') as string)?.trim()
   const origin = formData.get('origin') as string
@@ -18,8 +45,10 @@ export async function requestMagicLink(formData: FormData) {
   }
 
   if (!origin) {
-    console.error('Auth action: client origin not provided.')
-    return redirect(`/login?error=${encodeURIComponent('Could not determine application origin. Please try again.')}`)
+    console.error('Auth action: client origin not provided for magic link.')
+    return redirect(
+      `/login?error=${encodeURIComponent('Could not determine application origin. Please try again.')}`
+    )
   }
 
   const { ip } = await getProxyContext()
@@ -29,11 +58,13 @@ export async function requestMagicLink(formData: FormData) {
   const now = Date.now()
   // Get existing requests and filter out old ones
   const requests = (otpRequests.get(rateLimitKey) ?? []).filter(
-    (timestamp) => now - timestamp < RATE_LIMIT_WINDOW,
+    (timestamp) => now - timestamp < RATE_LIMIT_WINDOW
   )
 
   if (requests.length >= RATE_LIMIT_COUNT) {
-    return redirect(`/login?error=${encodeURIComponent('Too many requests. Please try again in 15 minutes.')}`)
+    return redirect(
+      `/login?error=${encodeURIComponent('Too many requests. Please try again in 15 minutes.')}`
+    )
   }
 
   const emailRedirectTo = `${origin}/auth/callback`
