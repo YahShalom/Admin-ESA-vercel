@@ -1,40 +1,42 @@
-import Link from 'next/link';
-import { CaraiMark } from '@/components/brand/CaraiMark';
-import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ensureProfile } from "@/lib/profile";
+import { WelcomeModal } from "@/components/WelcomeModal";
+import { BrandHeader } from "@/components/brand/BrandHeader";
 
-export default function LandingPage() {
-  return (
-    <div className="flex flex-col min-h-screen">
-      <header className="p-4 flex justify-between items-center">
-        <CaraiMark />
-        <Button asChild variant="ghost">
-          <Link href="/login">
-            Login
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
-      </header>
-      <main className="flex-grow flex flex-col items-center justify-center text-center p-4">
-        <div className="space-y-4">
-          <h1 className="text-6xl md:text-8xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-amber-500 py-2">
-            Admin ESA
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Your Enterprise SaaS Assistant. We handle the boilerplate so you can focus on your product.
-          </p>
-        </div>
-        <div className="mt-8">
-            <Button asChild size="lg">
-                <Link href="/dashboard">
-                    Go to Dashboard
-                </Link>
-            </Button>
+export default async function HomePage() {
+  try {
+    const ctx = await ensureProfile();
+    const user = ctx?.user ?? null;
+    const hasSeen = ctx?.profile?.has_seen_welcome ?? false;
+
+    return (
+      <main className="min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--fg))]">
+        {user && <WelcomeModal firstTime={!hasSeen} name="Raphael" />}
+
+        <div className="mx-auto max-w-3xl px-6 py-16">
+          <BrandHeader variant="hero" />
+
+          <div className="mt-10 rounded-2xl border border-white/10 bg-[rgb(var(--card))] p-8">
+            <p className="text-white/70">
+              Your Enterprise SaaS Assistant. We handle the boilerplate so you can
+              focus on your product.
+            </p>
+            <div className="mt-6">
+              <a
+                href="/dashboard"
+                className="inline-flex rounded-lg bg-blue-500 px-6 py-3 font-semibold text-white hover:opacity-90"
+              >
+                Go to Dashboard
+              </a>
+            </div>
+          </div>
         </div>
       </main>
-      <footer className="p-4 text-center text-muted-foreground text-sm">
-        © {new Date().getFullYear()} Admin ESA. All rights reserved.
-      </footer>
-    </div>
-  );
+    );
+  } catch (err: any) {
+    console.error("HomePage FAILED:", err);
+    console.error("message:", err?.message);
+    console.error("stack:", err?.stack);
+    console.error("string:", String(err));
+    throw err; // rethrow so Next shows the real error page too
+  }
 }

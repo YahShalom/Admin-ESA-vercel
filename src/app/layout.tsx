@@ -1,7 +1,8 @@
-import type {Metadata} from 'next';
+import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from "@/components/theme-provider";
 import { Inter, Playfair_Display } from 'next/font/google';
+import Header from '@/components/Header';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -20,21 +21,22 @@ export const metadata: Metadata = {
   description: 'Admin ESA - where Caribbean spirit meets intelligence',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${playfairDisplay.variable} font-body antialiased`}>
+      <body className={`${inter.variable} ${playfairDisplay.variable} font-body antialiased flex flex-col min-h-screen`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Header />
+          <main className="flex-grow">{children}</main>
         </ThemeProvider>
       </body>
     </html>
