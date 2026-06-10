@@ -1,6 +1,6 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
+import { createBrowserSupabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +13,7 @@ export default function ForgotPasswordClient() {
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        const supabase = createClient();
+        const supabase = createBrowserSupabase();
         const { error } = await supabase.auth.resetPasswordForEmail(
             formData.get("email") as string,
             {

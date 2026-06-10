@@ -1,11 +1,11 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
+import { createBrowserSupabase } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useState } from "react";
 
 export default function AccountForm({ user }: { user: User }) {
-  const supabase = createClient();
+  const supabase = createBrowserSupabase();
   const [loading, setLoading] = useState(false);
 
   const handleUpdate = async (event: React.FormEvent<HTMLFormElement>) => {

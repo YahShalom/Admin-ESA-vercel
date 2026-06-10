@@ -1,10 +1,10 @@
-import { createClient } from "@/lib/supabase/client";
+import { createServerSupabase } from "@/lib/supabase/server";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { UserNav } from "./UserNav";
 
 export default async function Header() {
-  const supabase = createClient();
+  const supabase = await createServerSupabase();
   const { data } = await supabase.auth.getUser();
 
   return (

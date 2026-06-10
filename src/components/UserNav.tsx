@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/client";
+import { createServerSupabase } from "@/lib/supabase/server";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +13,7 @@ import {
 import Link from "next/link";
 
 export async function UserNav() {
-  const supabase = createClient();
+  const supabase = await createServerSupabase();
   const { data } = await supabase.auth.getUser();
 
   return (

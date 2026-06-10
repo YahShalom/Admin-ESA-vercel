@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { createBrowserSupabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +15,7 @@ export default function ResetPasswordClient() {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const password = formData.get("password") as string;
-    const supabase = createClient();
+    const supabase = createBrowserSupabase();
     const { error } = await supabase.auth.updateUser({ password });
     if (error) {
       setError(error.message);

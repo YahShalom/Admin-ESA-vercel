@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { createServerSupabase } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { resolveTenantBySlug } from '@/lib/tenant/resolve'
-import { LayoutDashboard, BarChart2, Settings, ArrowLeft, Database, History, CreditCard } from 'lucide-react'
+import { LayoutDashboard, BarChart2, Settings, ArrowLeft, Database, History, CreditCard, Globe } from 'lucide-react'
 import {
   SidebarProvider,
   Sidebar,
@@ -66,6 +66,14 @@ export default async function TenantLayout({ children, params }: LayoutProps) {
                 <Link href={`/${tenant.slug}/data`}>
                   <Database />
                   <span>Data</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Website">
+                <Link href={`/${tenant.slug}/website`}>
+                  <Globe />
+                  <span>Website</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
