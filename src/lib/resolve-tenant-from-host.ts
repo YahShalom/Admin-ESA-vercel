@@ -23,14 +23,6 @@ export async function resolveTenantFromHost(host?: string | null): Promise<Resol
 
   const tenantSlug = isSubdomain ? cleanHost.replace(`.${rootDomain}`, '') : cleanHost
 
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return {
-      id: `local-${tenantSlug}`,
-      name: tenantSlug.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase()),
-      slug: tenantSlug,
-    }
-  }
-
   const supabase = await createServerSupabase()
   const { data, error } = await supabase
     .from('tenants')

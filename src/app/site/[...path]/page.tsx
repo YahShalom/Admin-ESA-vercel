@@ -17,31 +17,25 @@ export default async function SiteCatchAllPage({
     notFound()
   }
 
-  const hasSupabaseEnv = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
-  const pages = [] as any[]
-  const sections = [] as any[]
+  const supabase = await createServerSupabase()
 
-  if (hasSupabaseEnv) {
-    const supabase = await createServerSupabase()
+  const [pagesResult, sectionsResult] = await Promise.all([
+    supabase
+      .from('website_pages')
+      .select('id, slug, title, published')
+      .eq('tenant_id', tenant.id)
+      .eq('published', true)
+      .order('created_at', { ascending: true }),
+    supabase
+      .from('website_sections')
+      .select('*')
+      .eq('tenant_id', tenant.id)
+      .eq('is_visible', true)
+      .order('sort_order', { ascending: true }),
+  ])
 
-    const [pagesResult, sectionsResult] = await Promise.all([
-      supabase
-        .from('website_pages')
-        .select('id, slug, title, published')
-        .eq('tenant_id', tenant.id)
-        .eq('published', true)
-        .order('created_at', { ascending: true }),
-      supabase
-        .from('website_sections')
-        .select('*')
-        .eq('tenant_id', tenant.id)
-        .eq('is_visible', true)
-        .order('sort_order', { ascending: true }),
-    ])
-
-    pages.push(...(pagesResult.data ?? []))
-    sections.push(...(sectionsResult.data ?? []))
-  }
+  const pages = pagesResult.data ?? []
+  const sections = sectionsResult.data ?? []
   const currentPath = path.join('/') || 'home'
 
   const page = pages.find((entry: any) => entry.slug === currentPath || entry.slug === 'home')
