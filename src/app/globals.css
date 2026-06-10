@@ -4,31 +4,49 @@
 
 @layer base {
   :root {
-    --esa-blue: 59 130 246;   /* blue-500 */
-    --esa-gold: 245 158 11;   /* amber-500 */
-    --esa-ink: 11 15 26;      /* deep navy */
-    --esa-card: 18 24 38;     /* card navy */
-    --esa-white: 255 255 255;
-  }
+    --background: 222 47% 6%;
+    --foreground: 213 31% 91%;
+    --card: 222 47% 9%;
+    --card-foreground: 213 31% 91%;
+    --popover: 222 47% 9%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 38 92% 50%;
+    --primary-foreground: 222 47% 6%;
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 222 47% 6%;
+    --muted: 222 47% 14%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 222 47% 6%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 213 31% 91%;
+    --border: 222 47% 14%;
+    --input: 222 47% 14%;
+    --ring: 38 92% 50%;
+    --radius: 0.5rem;
+    --sidebar-background: 222 47% 7%;
+    --sidebar-foreground: 213 31% 91%;
+    --sidebar-primary: 38 92% 50%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 222 47% 12%;
+    --sidebar-accent-foreground: 213 31% 91%;
+    --sidebar-border: 222 47% 14%;
+    --sidebar-ring: 38 92% 50%;
+    --chart-1: 217 91% 60%;
+    --chart-2: 38 92% 50%;
+    --chart-3: 142 71% 45%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 0 84% 60%;
 
-  /* Light mode (white base, blue+gold accents) */
-  [data-theme="light"] {
-    --bg: 255 255 255;
-    --fg: 17 24 39;
-    --card: 255 255 255;
-    --cardBorder: 229 231 235;
-  }
-
-  /* Dark mode (your screenshot vibe) */
-  [data-theme="dark"] {
-    --bg: 11 15 26;
-    --fg: 229 231 235;
-    --card: 18 24 38;
-    --cardBorder: 255 255 255 / 0.08;
+    /* Brand tokens */
+    --esa-blue: 59 130 246;
+    --esa-gold: 245 158 11;
+    --esa-ink: 11 15 26;
+    --esa-card: 18 24 38;
   }
 
   body {
-    background: rgb(var(--bg));
-    color: rgb(var(--fg));
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }

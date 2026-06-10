@@ -28,7 +28,7 @@ export async function signUpWithEmailAndPassword(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const supabase = await createServerSupabase();
-  const origin = headers().get("origin");
+  const origin = (await headers()).get("origin");
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -53,7 +53,7 @@ export async function signUpWithEmailAndPassword(formData: FormData) {
 export async function requestPasswordReset(formData: FormData) {
   const email = formData.get("email") as string;
   const supabase = await createServerSupabase();
-  const origin = headers().get("origin");
+  const origin = (await headers()).get("origin");
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${origin}/auth/callback?next=/auth/update-password`,

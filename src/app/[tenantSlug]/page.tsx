@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Users, Activity, Database, Settings, BarChart2 } from 'lucide-react'
+import { Users, Activity, Database, Settings, BarChart2, Globe } from 'lucide-react'
 import { resolveTenantBySlug } from "@/lib/tenant/resolve"
 
 export default async function TenantHomePage({
@@ -87,6 +87,12 @@ export default async function TenantHomePage({
               <Link href={`/${tenant.slug}/analytics`}>
                 <BarChart2 className="mr-2 h-4 w-4" />
                 View Analytics
+              </Link>
+            </Button>
+            <Button variant="outline" asChild className="justify-start">
+              <Link href={`/${tenant.slug}/website`}>
+                <Globe className="mr-2 h-4 w-4" />
+                Website Management
               </Link>
             </Button>
             <Button variant="outline" asChild className="justify-start">

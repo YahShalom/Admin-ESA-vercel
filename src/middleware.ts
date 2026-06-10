@@ -1,9 +1,41 @@
 
-import { type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  // update user's auth session
+  const hasSupabaseEnv = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
+  if (!hasSupabaseEnv) {
+    const host = request.headers.get("host") || "";
+    const rootDomain = "carai.agency";
+    const cleanHost = host.split(":")[0];
+    const isAdminDomain = cleanHost === "admin.carai.agency" || cleanHost === rootDomain;
+    const isSubdomain = cleanHost.endsWith(`.${rootDomain}`) && !isAdminDomain;
+    const isCustomDomain = !cleanHost.endsWith(rootDomain) && !cleanHost.includes("localhost") && !cleanHost.includes("vercel.app");
+
+    if (isSubdomain || isCustomDomain) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/site${request.nextUrl.pathname}`;
+      return NextResponse.rewrite(url);
+    }
+
+    return NextResponse.next();
+  }
+
+  const host = request.headers.get("host") || "";
+  const rootDomain = "carai.agency";
+  const cleanHost = host.split(":")[0];
+
+  const isAdminDomain = cleanHost === "admin.carai.agency" || cleanHost === rootDomain;
+  const isSubdomain = cleanHost.endsWith(`.${rootDomain}`) && !isAdminDomain;
+  const isCustomDomain = !cleanHost.endsWith(rootDomain) && !cleanHost.includes("localhost") && !cleanHost.includes("vercel.app");
+
+  if (isSubdomain || isCustomDomain) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/site${request.nextUrl.pathname}`;
+    return NextResponse.rewrite(url);
+  }
+
   return await updateSession(request);
 }
 

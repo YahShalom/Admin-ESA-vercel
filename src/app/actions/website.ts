@@ -159,6 +159,8 @@ export async function upsertSection(tenantSlug: string, section: {
   page_id: string
   type: string
   content?: Record<string, unknown>
+  sort_order?: number
+  is_visible?: boolean
 }) {
   const { supabase, tenant } = await ensureTenantContext(tenantSlug)
   const sb: any = supabase
@@ -172,6 +174,8 @@ export async function upsertSection(tenantSlug: string, section: {
         page_id: section.page_id,
         type: section.type,
         content: section.content ?? {},
+        sort_order: section.sort_order ?? 0,
+        is_visible: section.is_visible ?? true,
       },
       { onConflict: 'id' }
     )
@@ -181,7 +185,30 @@ export async function upsertSection(tenantSlug: string, section: {
   if (error) throw error
 
   revalidatePath(`/${tenantSlug}/website/theme`)
+  revalidatePath(`/${tenantSlug}/website/sections`)
   return { section: data }
+}
+
+export async function deleteSection(sectionId: string, tenantSlug: string) {
+  const supabase = await createServerSupabase()
+  const { error } = await supabase
+    .from('website_sections')
+    .delete()
+    .eq('id', sectionId)
+
+  revalidatePath(`/${tenantSlug}/website/sections`)
+  return { error }
+}
+
+export async function toggleSectionVisible(sectionId: string, current: boolean, tenantSlug: string) {
+  const supabase = await createServerSupabase()
+  const { error } = await supabase
+    .from('website_sections')
+    .update({ is_visible: !current })
+    .eq('id', sectionId)
+
+  revalidatePath(`/${tenantSlug}/website/sections`)
+  return { error }
 }
 
 export async function saveDomain(tenantSlug: string, customDomain: string) {
